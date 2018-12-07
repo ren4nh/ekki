@@ -18,11 +18,12 @@ public class AccountService {
 	private AccountRepository accountRepository;
 
 	public Account create(User user) {
-		Random random = new Random();
-		String accountNumber = String.format("%s%s%s%s-%s", random.nextInt(), random.nextInt(), random.nextInt(),
-				random.nextInt(), random.nextInt());
-		return accountRepository
-				.save(Account.builder().user(user).branchCode("1").accountNumber(accountNumber).build());
+		Account a = accountRepository.save(Account.builder().user(user).branchCode("1")
+				.balance(BigDecimal.ZERO).build());
+		a = accountRepository.save(a);
+		a.setAccountNumber(generateAccountNumber(a.getId()));
+		update(a);
+		return a;
 	}
 
 	public Account update(Account account) {
@@ -58,6 +59,13 @@ public class AccountService {
 			destination.setBalance(destinationBalance);
 			update(destination);
 		}
+	}
+
+	private String generateAccountNumber(Long accountId) {
+		Random random = new Random();
+		String accountNumber = String.format("%s%s%s%s-%s", random.nextInt(9) + 0, random.nextInt(9) + 0,
+				random.nextInt(9) + 0, random.nextInt(9) + 0, accountId);
+		return accountNumber;
 	}
 
 }

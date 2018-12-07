@@ -17,7 +17,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
 	List<Transaction> getByUser(User user);
 
-	@Query(value = "select t from Transaction t where t.createdAt >=:initialDate and t.createdAt <=:finalDate and t.user.id=:userId and t.externalAcccount.id=:externalAccountId and t.destination.id=:destinationId and t.status=:status order by t.createAt desc limit 1")
+	@Query(value = "select t from Transaction t where t.created_at >=:initialDate and t.created_at <=:finalDate and t.userid=:userId and t.externalaccountid=:externalAccountId and t.destinationid=:destinationId and t.status=:status order by t.created_at desc limit 1", nativeQuery = true)
 	Transaction getSameTransactionCreateAtLast2Minutes(@Param("initialDate") LocalDateTime initialDate,
 			@Param("finalDate") LocalDateTime finalDate, @Param("userId") Long userId,
 			@Param("externalAccountId") Long externalAccountId, @Param("destinationId") Long destinationId, Status status);

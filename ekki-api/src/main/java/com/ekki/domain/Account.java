@@ -32,7 +32,6 @@ public class Account implements Serializable {
 	private Long id;
 	@NotNull(message = "Branch code is required")
 	private String branchCode;
-	@NotNull(message = "Account number is required")
 	private String accountNumber;
 	private BigDecimal balance;
 	@ManyToOne

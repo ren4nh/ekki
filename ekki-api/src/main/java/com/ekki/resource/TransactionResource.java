@@ -59,6 +59,10 @@ public class TransactionResource {
 				return new ResponseEntity<Object>(new ApiResponse(404, 404, "Favorecido não encontrado"), HttpStatus.NOT_FOUND);
 			}
 			t.setDestination(a);
+			Transaction old = transactionService.getSameTransactionCreateAtLast2Minutes(t);
+			if(old != null) {
+				transactionService.cancelTransaction(t);
+			}
 		} else {
 			ExternalAccount ea = externalAccountService.findById(transactionBean.getExternalAccountId());
 			if(ea == null) {
@@ -73,10 +77,6 @@ public class TransactionResource {
 			}
 			t.setCreditCard(cc);
 			t.setAmountPayedWithCreditCard(transactionBean.getAmountPayedByCreditCard());
-		}
-		Transaction old = transactionService.getSameTransactionCreateAtLast2Minutes(t);
-		if(old != null) {
-			transactionService.cancelTransaction(t);
 		}
 		transactionService.create(t);
 		return new ResponseEntity<Object>(new ApiResponse(true), HttpStatus.CREATED);
