@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ekki.bean.ChangePasswordRequestBean;
 import com.ekki.bean.UserCredentialsBean;
+import com.ekki.domain.Account;
 import com.ekki.domain.Token;
 import com.ekki.domain.Token.Type;
 import com.ekki.domain.User;
@@ -51,6 +52,18 @@ public class UserResource {
 			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
 		}
 		return ResponseEntity.ok(new ApiResponse(u));
+	}
+	
+	@ApiOperation(value = "Get a logged user")
+	@GetMapping("/account")
+	public ResponseEntity<Object> getAccount() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User u = userService.findByUsername(authentication.getName());
+		if (u == null) {
+			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
+		}
+		Account a = accountService.findByUser(u);
+		return ResponseEntity.ok(new ApiResponse(a));
 	}
 	
 	@ApiOperation(value = "Register a new user")

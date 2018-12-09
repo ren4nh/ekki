@@ -14,8 +14,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
-import org.hibernate.validator.constraints.br.CPF;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -46,8 +44,8 @@ public class CreditCard implements Serializable {
 	@NotNull(message = "Data de expiração deve ser informada")
 	@Past(message = "Cartão já expirado")
 	private LocalDateTime expiredAt;
-	@CPF(message = "Cpf inválido")
-	private String cpf;
+	@NotNull(message = "Descrição deve ser informada")
+	private String description;
 	@ManyToOne
 	@JoinColumn(name = "USERID")
 	@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")

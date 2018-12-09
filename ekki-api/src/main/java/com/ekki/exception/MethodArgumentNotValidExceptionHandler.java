@@ -25,15 +25,7 @@ public class MethodArgumentNotValidExceptionHandler {
     public ApiResponse methodArgumentNotValidException(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
         List<org.springframework.validation.FieldError> fieldErrors = result.getFieldErrors();
-        return processFieldErrors(fieldErrors);
-    }
-
-    private ApiResponse processFieldErrors(List<org.springframework.validation.FieldError> fieldErrors) {
-    	ApiResponse response = new ApiResponse(400, 400, "Validation error");
-        for (org.springframework.validation.FieldError fieldError: fieldErrors) {
-        	response.addError(fieldError.getField(), fieldError.getDefaultMessage());
-        }
-        return response;
+        return new ApiResponse(400, 400, fieldErrors.get(0).getDefaultMessage());
     }
 
 }
