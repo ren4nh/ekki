@@ -1,5 +1,6 @@
 package com.ekki.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import com.ekki.domain.Token;
 import com.ekki.domain.Token.Type;
+import com.ekki.domain.Transaction.Status;
+import com.ekki.domain.Transaction;
 import com.ekki.domain.User;
 import com.ekki.repository.TokenRepository;
 import com.ekki.repository.UserRepository;
@@ -44,7 +47,7 @@ public class UserService {
 	public User findByUsername(String username) {
 		return userRepository.findByUsername(username);
 	}
-	
+
 	public Token generateToken(User user, Type type) {
 		Token token = new Token();
 		token.setUser(user);
@@ -54,7 +57,7 @@ public class UserService {
 		token.setType(type);
 		return this.tokenRepository.saveAndFlush(token);
 	}
-	
+
 	public void changePassword(String password, User user) {
 		BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 		user.setPassword(passwordEncoder.encode(password));
@@ -68,6 +71,20 @@ public class UserService {
 	public Token setTokenUsed(Token token) {
 		token.setUsed(true);
 		return tokenRepository.saveAndFlush(token);
+	}
+
+	public void updateBalance(Transaction t) {
+		if(t.getAmountPayedWithCreditCard().compareTo(BigDecimal.ZERO) == 0) {
+			BigDecimal sourceBalance = t.getUser().getBalance();
+			sourceBalance = t.getStatus().equals(Status.COMPLETED) ? sourceBalance.subtract(t.getAmount()) : sourceBalance.add(t.getAmount());
+			t.getUser().setBalance(sourceBalance);
+			update(t.getUser());
+		}
+
+		BigDecimal destinationBalance = t.getDestination().getBalance();
+		destinationBalance = t.getStatus().equals(Status.COMPLETED) ? destinationBalance.add(t.getAmount()) : destinationBalance.subtract(t.getAmount());
+		t.getDestination().setBalance(destinationBalance);
+		update(t.getDestination());
 	}
 
 }

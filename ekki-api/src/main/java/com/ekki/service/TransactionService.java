@@ -18,11 +18,11 @@ public class TransactionService {
 	@Autowired
 	private TransactionRepository transactionRepository;
 	@Autowired
-	private AccountService accountService;
+	private UserService userService;
 
 	public Transaction create(Transaction transaction) {
 		transaction = transactionRepository.save(transaction);
-		accountService.updateBalance(transaction.getSource(), transaction.getDestination(), transaction.getAmount(), false);
+		userService.updateBalance(transaction);
 		return transaction;
 	}
 
@@ -50,14 +50,12 @@ public class TransactionService {
 	public void cancelTransaction(Transaction t) {
 		t.setStatus(Status.CANCELED);
 		update(t);
-		accountService.updateBalance(t.getSource(), t.getDestination(), t.getAmount(), true);
+		userService.updateBalance(t);
 	}
 
 	public Transaction getSameTransactionCreateAtLast2Minutes(Transaction t) {
 		return transactionRepository.getSameTransactionCreateAtLast2Minutes(LocalDateTime.now().minusMinutes(2),
-				LocalDateTime.now(), t.getUser().getId(),
-				t.getExternalAccount() != null ? t.getExternalAccount().getId() : null,
-				t.getDestination() != null ? t.getDestination().getId() : null, Status.COMPLETED);
+				LocalDateTime.now(), t.getUser().getId(), t.getDestination().getId());
 	}
 
 }

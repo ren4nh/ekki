@@ -14,17 +14,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ekki.bean.ChangePasswordRequestBean;
 import com.ekki.bean.UserCredentialsBean;
-import com.ekki.domain.Account;
 import com.ekki.domain.Token;
 import com.ekki.domain.Token.Type;
 import com.ekki.domain.User;
 import com.ekki.mail.MailSenderService;
 import com.ekki.mail.SimpleMail;
-import com.ekki.service.AccountService;
 import com.ekki.service.UserService;
 import com.ekki.utils.ApiResponse;
 
@@ -40,11 +39,9 @@ public class UserResource {
 	private MailSenderService mailSenderService;
 	@Autowired
 	private BCryptPasswordEncoder encoder;
-	@Autowired
-	private AccountService accountService;
 
 	@ApiOperation(value = "Get a logged user")
-	@GetMapping("/me")
+	@GetMapping("me")
 	public ResponseEntity<Object> getLoggedUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
@@ -54,20 +51,30 @@ public class UserResource {
 		return ResponseEntity.ok(new ApiResponse(u));
 	}
 	
-	@ApiOperation(value = "Get a logged user")
-	@GetMapping("/account")
-	public ResponseEntity<Object> getAccount() {
+	@ApiOperation(value = "Validate user password")
+	@GetMapping("validatePassword")
+	public ResponseEntity<Object> validatePassword(@RequestParam("password") String password) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
 		if (u == null) {
 			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
 		}
-		Account a = accountService.findByUser(u);
-		return ResponseEntity.ok(new ApiResponse(a));
+		return ResponseEntity.ok(new ApiResponse(encoder.matches(password, u.getPassword())));
 	}
 	
+	@ApiOperation(value = "Find a user")
+	@GetMapping
+	public ResponseEntity<Object> getUser(@RequestParam("username") String username) {
+		User user = userService.findByUsername(username);
+		if (user == null) {
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Usuário não encontrado"), HttpStatus.BAD_REQUEST);
+		}
+		return new ResponseEntity<Object>(new ApiResponse(user), HttpStatus.OK);
+	}
+
+	
 	@ApiOperation(value = "Register a new user")
-	@PostMapping("/register")
+	@PostMapping("register")
 	public ResponseEntity<Object> createUser(@Valid @RequestBody UserCredentialsBean cred) {
 		User user = userService.findByUsername(cred.getUsername());
 		if (user != null) {
@@ -75,7 +82,6 @@ public class UserResource {
 		}
 		user = User.builder().name(cred.getName()).password(encoder.encode(cred.getPassword())).username(cred.getUsername()).createdAt(LocalDateTime.now()).active(true).build();
 		user = userService.create(user);
-		accountService.create(user);
 		return new ResponseEntity<Object>(new ApiResponse(true), HttpStatus.CREATED);
 	}
 	

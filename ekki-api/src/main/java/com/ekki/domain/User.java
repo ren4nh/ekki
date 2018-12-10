@@ -1,7 +1,10 @@
 package com.ekki.domain;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -42,5 +45,7 @@ public class User implements Serializable {
 	@Builder.Default
 	private boolean active = false;
 	private LocalDateTime createdAt;
+	@Builder.Default
+	private BigDecimal balance = BigDecimal.ZERO;
 
 }

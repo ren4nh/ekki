@@ -36,18 +36,11 @@ public class Transaction implements Serializable {
 	@JoinColumn(name = "USERID")
 	private User user;
 	@ManyToOne
-	@JoinColumn(name = "SOURCEID")
-	private Account source;
-	@ManyToOne
 	@JoinColumn(name = "DESTINATIONID")
-	private Account destination;
-	@ManyToOne
-	@JoinColumn(name = "CREDITCARDID")
-	private CreditCard creditCard;
-	@ManyToOne
-	@JoinColumn(name = "EXTERNALACCOUNTID")
-	private ExternalAccount externalAccount;
-	private BigDecimal amountPayedWithCreditCard;
+	private User destination;
+	private String description;
+	@Builder.Default
+	private BigDecimal amountPayedWithCreditCard = BigDecimal.ZERO;
 	private Status status;
 	
 	public enum Status {

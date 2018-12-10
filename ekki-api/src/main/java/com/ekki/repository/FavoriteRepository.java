@@ -1,14 +1,16 @@
 package com.ekki.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.ekki.domain.Account;
+import com.ekki.domain.Favorite;
 import com.ekki.domain.User;
 
 @Repository
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface FavoriteRepository extends JpaRepository<Favorite, Long> {
 	
-	Account getByUser(User user);
+	List<Favorite> getByUser(User user);
 
 }

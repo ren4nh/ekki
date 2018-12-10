@@ -1,7 +1,8 @@
 package com.ekki.domain;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -43,7 +47,8 @@ public class CreditCard implements Serializable {
 	private Long securityCode;
 	@NotNull(message = "Data de expiração deve ser informada")
 	@Past(message = "Cartão já expirado")
-	private LocalDateTime expiredAt;
+	@JsonFormat(pattern = "dd/MM/yyyy")
+	private LocalDate expiredAt;
 	@NotNull(message = "Descrição deve ser informada")
 	private String description;
 	@ManyToOne

@@ -1,8 +1,5 @@
 package com.ekki.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -14,7 +11,6 @@ public class ApiResponse {
 	private Integer code;
 	private String message;
 	private Object data;
-	private List<Error> errors;
 
 	public ApiResponse() {
 	}
@@ -82,18 +78,5 @@ public class ApiResponse {
 	public void setSuccess(boolean success) {
 		this.success = success;
 	}
-
-	public List<Error> getErrors() {
-		return errors;
-	}
-
-	public void addError(String field, String message) {
-		if(errors == null) {
-			errors = new ArrayList<>();
-		}
-		this.errors.add(new Error(field, message));
-	}
-	
-	
 
 }

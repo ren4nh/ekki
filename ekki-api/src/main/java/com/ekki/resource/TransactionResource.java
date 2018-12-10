@@ -15,14 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ekki.bean.TransactionBean;
-import com.ekki.domain.Account;
 import com.ekki.domain.CreditCard;
-import com.ekki.domain.ExternalAccount;
 import com.ekki.domain.Transaction;
+import com.ekki.domain.Transaction.Status;
 import com.ekki.domain.User;
-import com.ekki.service.AccountService;
 import com.ekki.service.CreditCardService;
-import com.ekki.service.ExternalAccountService;
 import com.ekki.service.TransactionService;
 import com.ekki.service.UserService;
 import com.ekki.utils.ApiResponse;
@@ -32,67 +29,67 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("transaction")
 public class TransactionResource {
-	
+
 	@Autowired
 	private TransactionService transactionService;
 	@Autowired
 	private UserService userService;
 	@Autowired
-	private ExternalAccountService externalAccountService;
-	@Autowired
 	private CreditCardService creditCardService;
-	@Autowired
-	private AccountService accountService;
-	
+
 	@PostMapping
 	@ApiOperation(value = "Create a new transaction")
 	public ResponseEntity<Object> create(@RequestBody TransactionBean transactionBean) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
 		if (u == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Usuário não encontrado"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Usuário não encontrado"),
+					HttpStatus.NOT_FOUND);
 		}
-		Transaction t = Transaction.builder().amount(transactionBean.getAmount()).user(u).createdAt(LocalDateTime.now()).build();
-		if(transactionBean.getDestinationId() != null) {
-			Account a = accountService.findById(transactionBean.getDestinationId());
-			if(a == null) {
-				return new ResponseEntity<Object>(new ApiResponse(404, 404, "Favorecido não encontrado"), HttpStatus.NOT_FOUND);
-			}
-			t.setDestination(a);
-			Transaction old = transactionService.getSameTransactionCreateAtLast2Minutes(t);
-			if(old != null) {
-				transactionService.cancelTransaction(t);
-			}
-		} else {
-			ExternalAccount ea = externalAccountService.findById(transactionBean.getExternalAccountId());
-			if(ea == null) {
-				return new ResponseEntity<Object>(new ApiResponse(404, 404, "Favorecido não encontrado"), HttpStatus.NOT_FOUND);
-			}
-			t.setExternalAccount(ea);
+		if(u.getId() == transactionBean.getDestinationId()) {
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Não é possivel transferir para si mesmo"),
+					HttpStatus.BAD_REQUEST);
 		}
-		if(transactionBean.getCreditCardId() != null) {
+		if(transactionBean.getAmount().compareTo(u.getBalance()) == 1 && transactionBean.getCreditCardId() == null) {
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Saldo insuficiente, cartão de crédito deve ser informado"),
+					HttpStatus.BAD_REQUEST);
+		}
+		Transaction t = Transaction.builder().amount(transactionBean.getAmount()).user(u).createdAt(LocalDateTime.now()).status(Status.COMPLETED)
+				.build();
+		User destination = userService.findById(transactionBean.getDestinationId());
+		if (destination == null) {
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Favorecido não encontrado"),
+					HttpStatus.BAD_REQUEST);
+		}
+		t.setDestination(destination);
+		Transaction old = transactionService.getSameTransactionCreateAtLast2Minutes(t);
+		if (old != null) {
+			transactionService.cancelTransaction(old);
+		}
+		if (transactionBean.getCreditCardId() != null) {
 			CreditCard cc = creditCardService.findById(transactionBean.getCreditCardId());
-			if(cc == null) {
-				return new ResponseEntity<Object>(new ApiResponse(404, 404, "Cartão de crédito não encontrado"), HttpStatus.NOT_FOUND);
+			if (cc == null) {
+				return new ResponseEntity<Object>(new ApiResponse(404, 404, "Cartão de crédito não encontrado"),
+						HttpStatus.NOT_FOUND);
 			}
-			t.setCreditCard(cc);
-			t.setAmountPayedWithCreditCard(transactionBean.getAmountPayedByCreditCard());
+			t.setDescription("Pago com o cartão" + cc.getDescription());
+			t.setAmountPayedWithCreditCard(transactionBean.getAmount().subtract(u.getBalance()));
 		}
 		transactionService.create(t);
 		return new ResponseEntity<Object>(new ApiResponse(true), HttpStatus.CREATED);
 	}
-	
+
 	@GetMapping("/user")
 	@ApiOperation(value = "Get all transactions")
 	public ResponseEntity<Object> getAllExternalAccounts() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
 		if (u == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Usuário não encontrado"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Usuário não encontrado"),
+					HttpStatus.NOT_FOUND);
 		}
 		List<Transaction> transactions = transactionService.findByUser(u);
 		return new ResponseEntity<Object>(new ApiResponse(transactions), HttpStatus.OK);
 	}
-
 
 }

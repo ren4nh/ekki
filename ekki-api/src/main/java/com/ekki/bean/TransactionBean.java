@@ -14,8 +14,6 @@ import lombok.NoArgsConstructor;
 public class TransactionBean {
 	
 	private BigDecimal amount;
-	private BigDecimal amountPayedByCreditCard;
-	private Long externalAccountId;
 	private Long destinationId;
 	private Long creditCardId;
 
