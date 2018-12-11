@@ -18,6 +18,7 @@ import Favorites from './components/Favorites';
 import CreditCard from './components/CreditCard';
 import History from './components/History';
 import Transfer from './components/Transfer';
+import * as serviceWorker from './serviceWorker';
 
 const { store } = configureStore();
 
@@ -42,3 +43,5 @@ ReactDOM.render(
             </App>
         </ConnectedRouter>
     </Provider>, document.querySelector('#root'));
+
+serviceWorker.register();

@@ -14,7 +14,7 @@ export const createTransaction = formProps => async dispatch => {
 
     dispatch(alerts.showSuccessMessage('Salvo com sucesso'));
     dispatch({ type: CREATE_TRANSACTION, payload: responseData });
-    dispatch(reset('transactionForm'));
+    dispatch(reset('transferForm'));
   } catch (e) {
     console.log(e);
     if (e.response) {
