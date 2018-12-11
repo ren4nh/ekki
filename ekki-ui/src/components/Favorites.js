@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from "react";
+import React, { Component, Fragment } from 'react';
 import {
   Grid,
   withStyles,
@@ -8,129 +8,125 @@ import {
   CardContent,
   CircularProgress,
   FormControl
-} from "@material-ui/core";
-import { compose } from "redux";
-import { connect } from "react-redux";
-import { reduxForm, Field } from "redux-form";
-import MUIDataTable from "mui-datatables";
-import customInput from "./custom/customInput";
-import * as actions from "../actions";
-import requireAuth from "./requireAuth";
+} from '@material-ui/core';
+import { compose } from 'redux';
+import { connect } from 'react-redux';
+import { reduxForm, Field } from 'redux-form';
+import MUIDataTable from 'mui-datatables';
+import customInput from './custom/customInput';
+import * as actions from '../actions';
+import requireAuth from './requireAuth';
+import asyncValidate from '../utils/asyncValidate';
 
-class Newsletter extends Component {
-  componentDidMount() {}
+class Favorites extends Component {
+  componentDidMount() {
+    this.props.getAllFavorites();
+  }
 
   onSubmit = formProps => {
     if (formProps.id) {
-      this.props.updateNewsletter(formProps);
+      this.props.updateFavorite(formProps);
     } else {
-      this.props.createNewsletter(formProps);
+      this.props.createFavorite(formProps);
     }
   };
 
   onDelete = id => {
-    this.props.deleteNewsletter(id);
+    this.props.deleteFavorite(id);
   };
 
   onSend = id => {
-    this.props.sendNewsletter(id);
+    this.props.sendFavorite(id);
   };
 
   onCancel = id => {
-    this.props.cancelNewsletter(id);
+    this.props.cancelFavorite(id);
   };
 
   onLoad = data => {
-    const newsletter = {
+    const favorite = {
       id: data[0],
-      name: data[1],
-      content: data[2],
-      type: data[3],
-      status: data[4]
+      email: data[1],
+      description: data[3]
     };
 
-    this.props.loadNewsletter(newsletter);
+    this.props.loadFavorite(favorite);
+  };
+
+  onClear = reset => {
+    this.props.clearFavorite();
+    reset();
   };
 
   render() {
-    const { favorites, classes, handleSubmit, isFetching } = this.props;
+    const { favorites, classes, handleSubmit, isFetching, reset } = this.props;
 
     const options = {
       selectableRows: false,
       rowsPerPage: 20,
-      responsive: "scroll",
+      responsive: 'scroll',
       rowsPerPageOptions: [10, 20, 50]
     };
 
     const renderButton = (type, value, tableMeta) => {
-        return (
-          <Fragment>
-            <FormControl className={classes.formControl}>
-              <Button
-                variant="contained"
-                type="button"
-                className={classes.button}
-                onClick={() => {
-                  this.onLoad(tableMeta.rowData);
-                }}
-              >
-                {" "}
-                Editar{" "}
-              </Button>
-            </FormControl>
-            <FormControl className={classes.formControl}>
-              <Button
-                color="primary"
-                variant="contained"
-                type="button"
-                className={classes.button}
-                onClick={() => {
-                  this.onLoad(tableMeta.rowData);
-                }}
-              >
-                {" "}
-                Deletar{" "}
-              </Button>
-            </FormControl>
-          </Fragment>
-        );
+      return (
+        <Fragment>
+          <FormControl className={classes.formControl}>
+            <Button
+              variant="contained"
+              type="button"
+              className={classes.button}
+              onClick={() => {
+                this.onLoad(tableMeta.rowData);
+              }}
+            >
+              Editar
+            </Button>
+          </FormControl>
+          <FormControl className={classes.formControl}>
+            <Button
+              color="primary"
+              variant="contained"
+              type="button"
+              className={classes.button}
+              onClick={() => {
+                this.onDelete(value);
+              }}
+            >
+              Deletar
+            </Button>
+          </FormControl>
+        </Fragment>
+      );
     };
 
     const actions = {
-      name: "Ações",
+      name: 'Ações',
       options: {
         customBodyRender: (value, tableMeta, updateValue) => {
-          return (
-            <Fragment>
-              {renderButton(tableMeta.rowData[4], value, tableMeta)}
-            </Fragment>
-          );
+          return <Fragment>{renderButton(tableMeta.rowData[4], value, tableMeta)}</Fragment>;
         },
         filter: false,
         sort: false
       }
     };
 
-    const columns = ["#", "Email", "Nome", "Descrição", actions];
+    const columns = ['#', 'Email', 'Nome', 'Descrição', actions];
 
     let data = [];
     favorites.map(p => {
-        return data.push([p.id, p.user.username, p.user.name, p.description, p.id]);
-      });
+      return data.push([p.id, p.favorite.username, p.favorite.name, p.description, p.id]);
+    });
 
     return (
-      <Grid container justify="space-evenly" alignItems="stretch" direction="column" sm={10} xs={6} >
-        <Grid item className={classes.grid} >
+      <Grid container justify="space-evenly" alignItems="stretch" direction="column">
+        <Grid item className={classes.grid} sm={10} xs={6}>
           <Card className={classes.card}>
             <CardHeader title="Favorecido" className={classes.cardHeader} />
             <CardContent>
               <form onSubmit={handleSubmit(this.onSubmit)}>
                 <Field name="email" label="Email" component={customInput} />
-                <Field
-                  name="description"
-                  label="Descrição"
-                  component={customInput}
-                />
+                <Field name="description" label="Descrição" component={customInput} />
                 <br />
                 <div className={classes.wrapper}>
                   <Button
@@ -140,24 +136,29 @@ class Newsletter extends Component {
                     disabled={isFetching}
                     fullWidth={true}
                   >
-                    {" "}
-                    Salvar{" "}
+                    Salvar
                   </Button>
-                  {isFetching && (
-                    <CircularProgress
-                      size={24}
-                      className={classes.buttonProgress}
-                    />
-                  )}
+                  {isFetching && <CircularProgress size={24} className={classes.buttonProgress} />}
+                  <br />
+                  <br />
+                  <Button
+                    color="primary"
+                    variant="contained"
+                    type="button"
+                    onClick={() => this.onClear(reset)}
+                    fullWidth={true}
+                  >
+                    Limpar
+                  </Button>
                 </div>
               </form>
             </CardContent>
           </Card>
         </Grid>
-        <Grid item className={classes.grid}>
+        <Grid item className={classes.grid} sm={10} xs={6}>
           <div className={classes.table}>
             <MUIDataTable
-              title={"Meus favorecidos"}
+              title={'Meus favorecidos'}
               data={data}
               columns={columns}
               options={options}
@@ -174,48 +175,47 @@ const styles = theme => ({
     marginTop: theme.spacing.unit * 3
   },
   cardHeader: {
-    textAlign: "center"
+    textAlign: 'center'
   },
   card: {
-    marginTop: "20px"
+    marginTop: '20px'
   },
   formControl: {
     margin: theme.spacing.unit
   },
   buttonProgress: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
     marginTop: -12,
     marginLeft: -12
   },
   wrapper: {
     margin: theme.spacing.unit,
-    position: "relative"
+    position: 'relative'
   }
 });
 
 const validate = values => {
   const errors = {};
   if (!values.email) {
-    errors.email = "Email deve ser informado!";
+    errors.email = 'Email deve ser informado!';
   } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(values.email)) {
-    errors.email = "Email inválido";
+    errors.email = 'Email inválido';
   }
   if (!values.description) {
-    errors.description = "Descrição deve ser informado";
+    errors.description = 'Descrição deve ser informado';
   } else if (values.description.trim().length <= 0) {
-    errors.description = "Descrição deve ser informado";
+    errors.description = 'Descrição deve ser informado';
   }
   return errors;
 };
 
 function mapStateToProps(state) {
-  let initialValues = {};
   return {
-    favorites: state.user.favorites,
+    favorites: state.favorite.favorites,
     isFetching: state.auth.isFetching,
-    initialValues: initialValues
+    initialValues: state.favorite.selected
   };
 }
 
@@ -226,8 +226,10 @@ export default compose(
     actions
   ),
   reduxForm({
-    form: "newsletterForm",
+    form: 'favoriteForm',
     enableReinitialize: true,
-    validate
+    validate,
+    asyncValidate,
+    asyncBlurFields: ['email']
   })
-)(requireAuth(Newsletter));
+)(requireAuth(Favorites));

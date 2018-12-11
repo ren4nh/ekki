@@ -1,27 +1,27 @@
 import { reset } from 'redux-form';
 import {
-  CREATE_CARD,
+  CREATE_FAVORITE,
   AUTH_FETCH,
-  SET_CARDS,
-  LOAD_CARD,
-  DELETE_CARD,
-  UPDATE_CARD,
-  CLEAR_CARD
+  SET_FAVORITES,
+  LOAD_FAVORITE,
+  DELETE_FAVORITE,
+  UPDATE_FAVORITE,
+  CLEAR_FAVORITE
 } from './types';
 import * as alerts from './Alert';
 import performRequest from '../configAxios';
 
-export const createCreditCard = formProps => async dispatch => {
+export const createFavorite = formProps => async dispatch => {
   try {
     dispatch({ type: AUTH_FETCH });
 
-    const response = await performRequest('POST', '/credit-card', formProps, true);
+    const response = await performRequest('POST', '/favorite', formProps, true);
 
     const responseData = response.data.data;
 
     dispatch(alerts.showSuccessMessage('Salvo com sucesso'));
-    dispatch({ type: CREATE_CARD, payload: responseData });
-    dispatch(reset('creditCardForm'));
+    dispatch({ type: CREATE_FAVORITE, payload: responseData });
+    dispatch(reset('favoriteForm'));
   } catch (e) {
     console.log(e);
     if (e.response) {
@@ -36,17 +36,17 @@ export const createCreditCard = formProps => async dispatch => {
   }
 };
 
-export const updateCreditCard = formProps => async dispatch => {
+export const updateFavorite = formProps => async dispatch => {
   try {
     dispatch({ type: AUTH_FETCH });
 
-    const response = await performRequest('PUT', `/credit-card/${formProps.id}`, formProps, true);
+    const response = await performRequest('PUT', `/favorite/${formProps.id}`, formProps, true);
 
     const responseData = response.data.data;
 
-    dispatch({ type: UPDATE_CARD, payload: responseData });
+    dispatch({ type: UPDATE_FAVORITE, payload: responseData });
     dispatch(alerts.showSuccessMessage('Salvo com sucesso'));
-    dispatch(reset('creditCardForm'));
+    dispatch(reset('favoriteForm'));
   } catch (e) {
     console.log(e);
     if (e.response) {
@@ -61,13 +61,13 @@ export const updateCreditCard = formProps => async dispatch => {
   }
 };
 
-export const deleteCreditCard = id => async dispatch => {
+export const deleteFavorite = id => async dispatch => {
   try {
     dispatch({ type: AUTH_FETCH });
 
-    await performRequest('DELETE', `/credit-card/${id}`, null, true);
+    await performRequest('DELETE', `/favorite/${id}`, null, true);
 
-    dispatch({ type: DELETE_CARD, payload: id });
+    dispatch({ type: DELETE_FAVORITE, payload: id });
     dispatch(alerts.showSuccessMessage('Deletado com sucesso'));
   } catch (e) {
     console.log(e);
@@ -83,15 +83,15 @@ export const deleteCreditCard = id => async dispatch => {
   }
 };
 
-export const getAllCards = () => async dispatch => {
+export const getAllFavorites = () => async dispatch => {
   try {
     dispatch({ type: AUTH_FETCH });
 
-    const response = await performRequest('GET', '/credit-card/user', null, true);
+    const response = await performRequest('GET', '/favorite/user', null, true);
 
     const responseData = response.data.data;
 
-    dispatch({ type: SET_CARDS, payload: responseData });
+    dispatch({ type: SET_FAVORITES, payload: responseData });
   } catch (e) {
     console.log(e);
     if (e.response) {
@@ -106,11 +106,11 @@ export const getAllCards = () => async dispatch => {
   }
 };
 
-export const loadCreditCard = data => ({
-  type: LOAD_CARD,
+export const loadFavorite = data => ({
+  type: LOAD_FAVORITE,
   payload: data
 });
 
-export const clearCreditCard = data => ({
-  type: CLEAR_CARD
+export const clearFavorite = data => ({
+  type: CLEAR_FAVORITE
 });

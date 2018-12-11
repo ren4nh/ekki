@@ -63,10 +63,16 @@ public class CreditCardResource {
 	@PutMapping("/{creditCardId}")
 	@ApiOperation(value = "Update a credit card")
 	public ResponseEntity<Object> updateBank(@PathVariable("creditCardId") Long creditCardId, @Valid @RequestBody CreditCard creditCard) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		User u = userService.findByUsername(authentication.getName());
+		if (u == null) {
+			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
+		}
 		if (!creditCardService.exists(creditCardId)) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Bank not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Credit Card not found"), HttpStatus.NOT_FOUND);
 		}
 		creditCard.setId(creditCardId);
+		creditCard.setUser(u);
 		creditCard = creditCardService.update(creditCard);
 		return new ResponseEntity<Object>(new ApiResponse(creditCard), HttpStatus.OK);
 	}

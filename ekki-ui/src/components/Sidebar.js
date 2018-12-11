@@ -1,35 +1,35 @@
-import React, { Component, Fragment } from "react";
-import PropTypes from "prop-types";
-import AppBar from "@material-ui/core/AppBar";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Divider from "@material-ui/core/Divider";
-import Drawer from "@material-ui/core/Drawer";
-import Hidden from "@material-ui/core/Hidden";
-import IconButton from "@material-ui/core/IconButton";
-import { Link } from "react-router-dom";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import DashboardIcon from "@material-ui/icons/Dashboard";
-import FaceIcon from "@material-ui/icons/Face";
-import SwapIcon from "@material-ui/icons/SwapHoriz";
-import PaymentIcon from "@material-ui/icons/Payment";
-import HistoryIcon from "@material-ui/icons/History";
-import ExitIcon from "@material-ui/icons/ExitToApp";
-import MenuIcon from "@material-ui/icons/Menu";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import { withStyles } from "@material-ui/core/styles";
+import React, { Component, Fragment } from 'react';
+import PropTypes from 'prop-types';
+import AppBar from '@material-ui/core/AppBar';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Divider from '@material-ui/core/Divider';
+import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
+import IconButton from '@material-ui/core/IconButton';
+import { Link } from 'react-router-dom';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import DashboardIcon from '@material-ui/icons/Dashboard';
+import FaceIcon from '@material-ui/icons/Face';
+import SwapIcon from '@material-ui/icons/SwapHoriz';
+import PaymentIcon from '@material-ui/icons/Payment';
+import HistoryIcon from '@material-ui/icons/History';
+import ExitIcon from '@material-ui/icons/ExitToApp';
+import MenuIcon from '@material-ui/icons/Menu';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import { withStyles } from '@material-ui/core/styles';
 
 const drawerWidth = 240;
 
 const styles = theme => ({
   root: {
-    display: "flex"
+    display: 'flex'
   },
   drawer: {
-    [theme.breakpoints.up("sm")]: {
+    [theme.breakpoints.up('sm')]: {
       width: drawerWidth,
       flexShrink: 0
     }
@@ -40,8 +40,8 @@ const styles = theme => ({
   },
   menuButton: {
     marginRight: 20,
-    [theme.breakpoints.up("sm")]: {
-      display: "none"
+    [theme.breakpoints.up('sm')]: {
+      display: 'none'
     }
   },
   toolbar: theme.mixins.toolbar,
@@ -65,7 +65,7 @@ class ResponsiveDrawer extends Component {
 
   closeDrawer = () => {
     this.setState(state => ({ mobileOpen: false }));
-  }
+  };
 
   render() {
     const { classes, theme, children } = this.props;
@@ -79,42 +79,42 @@ class ResponsiveDrawer extends Component {
             <ListItemIcon>
               <DashboardIcon />
             </ListItemIcon>
-            <ListItemText primary={"Inicio"} />
+            <ListItemText primary={'Inicio'} />
           </ListItem>
           <Divider />
           <ListItem button component={Link} to="/favorites" onClick={this.closeDrawer}>
             <ListItemIcon>
               <FaceIcon />
             </ListItemIcon>
-            <ListItemText primary={"Favorecidos"} />
+            <ListItemText primary={'Favorecidos'} />
           </ListItem>
           <Divider />
           <ListItem button component={Link} to="/transfer" onClick={this.closeDrawer}>
             <ListItemIcon>
               <SwapIcon />
             </ListItemIcon>
-            <ListItemText primary={"Transferencia"} />
+            <ListItemText primary={'Transferencia'} />
           </ListItem>
           <Divider />
           <ListItem button component={Link} to="/card" onClick={this.closeDrawer}>
             <ListItemIcon>
               <PaymentIcon />
             </ListItemIcon>
-            <ListItemText primary={"Cartões"} />
+            <ListItemText primary={'Cartões'} />
           </ListItem>
           <Divider />
           <ListItem button component={Link} to="/history" onClick={this.closeDrawer}>
             <ListItemIcon>
               <HistoryIcon />
             </ListItemIcon>
-            <ListItemText primary={"Histórico"} />
+            <ListItemText primary={'Histórico'} />
           </ListItem>
           <Divider />
           <ListItem button component={Link} to="/logout">
             <ListItemIcon>
               <ExitIcon />
             </ListItemIcon>
-            <ListItemText primary={"Sair"} />
+            <ListItemText primary={'Sair'} />
           </ListItem>
           <Divider />
         </List>
@@ -144,7 +144,7 @@ class ResponsiveDrawer extends Component {
             <Drawer
               container={this.props.container}
               variant="temporary"
-              anchor={theme.direction === "rtl" ? "right" : "left"}
+              anchor={theme.direction === 'rtl' ? 'right' : 'left'}
               open={this.state.mobileOpen}
               onClose={this.handleDrawerToggle}
               classes={{

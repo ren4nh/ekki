@@ -21,7 +21,7 @@ class Dashboard extends Component {
     return (
       <Grid container justify="space-evenly">
         <Typography gutterBottom variant={"h4"} className={classes.card}>
-          Bem vindo {user && user.name}{" "}, seu saldo em conta é de R$ 0,00
+          Bem vindo {user && user.name}{" "}, seu saldo em conta é de R$ {user.balance}
         </Typography>
       </Grid>
     );

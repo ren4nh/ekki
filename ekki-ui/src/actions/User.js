@@ -68,3 +68,19 @@ export const changePassword = (formProps) => async dispatch => {
         }
     }
 }
+
+export const validatePassword = (formProps, callback) => async dispatch => {
+    try {
+        await performRequest('POST', '/user/validatePassword', formProps, true);
+        callback();
+    } catch(e) {
+        console.log(e);
+        if(e.response) {
+            if(e.response.status === 400 || e.response.status === 404) {
+                dispatch(alerts.showErrorMessage(e.response.data.message));
+            }
+        } else {
+            dispatch(alerts.showErrorMessage('Erro ao se comunicar com o servidor!'));
+        }
+    }
+}

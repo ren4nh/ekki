@@ -74,15 +74,16 @@ public class UserService {
 	}
 
 	public void updateBalance(Transaction t) {
-		if(t.getAmountPayedWithCreditCard().compareTo(BigDecimal.ZERO) == 0) {
-			BigDecimal sourceBalance = t.getUser().getBalance();
-			sourceBalance = t.getStatus().equals(Status.COMPLETED) ? sourceBalance.subtract(t.getAmount()) : sourceBalance.add(t.getAmount());
-			t.getUser().setBalance(sourceBalance);
-			update(t.getUser());
-		}
+		BigDecimal balanceAmount = t.getAmount().subtract(t.getAmountPayedWithCreditCard());
+		BigDecimal sourceBalance = t.getUser().getBalance();
+		sourceBalance = t.getStatus().equals(Status.COMPLETED) ? sourceBalance.subtract(balanceAmount)
+				: sourceBalance.add(balanceAmount);
+		t.getUser().setBalance(sourceBalance);
+		update(t.getUser());
 
 		BigDecimal destinationBalance = t.getDestination().getBalance();
-		destinationBalance = t.getStatus().equals(Status.COMPLETED) ? destinationBalance.add(t.getAmount()) : destinationBalance.subtract(t.getAmount());
+		destinationBalance = t.getStatus().equals(Status.COMPLETED) ? destinationBalance.add(t.getAmount())
+				: destinationBalance.subtract(t.getAmount());
 		t.getDestination().setBalance(destinationBalance);
 		update(t.getDestination());
 	}

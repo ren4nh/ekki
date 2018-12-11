@@ -44,7 +44,7 @@ public class FavoriteResource {
 		if (u == null) {
 			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
 		}
-		User fav = userService.findById(favoriteBean.getUser());
+		User fav = userService.findByUsername(favoriteBean.getEmail());
 		if (fav == null) {
 			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
 		}
@@ -72,7 +72,7 @@ public class FavoriteResource {
 		if (favorite == null) {
 			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Bank not found"), HttpStatus.NOT_FOUND);
 		}
-		User fav = userService.findById(favoriteBean.getUser());
+		User fav = userService.findByUsername(favoriteBean.getEmail());
 		if (fav == null) {
 			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
 		}

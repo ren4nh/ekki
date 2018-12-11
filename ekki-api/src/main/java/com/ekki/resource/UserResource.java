@@ -52,14 +52,17 @@ public class UserResource {
 	}
 	
 	@ApiOperation(value = "Validate user password")
-	@GetMapping("validatePassword")
-	public ResponseEntity<Object> validatePassword(@RequestParam("password") String password) {
+	@PostMapping("validatePassword")
+	public ResponseEntity<Object> validatePassword(@RequestBody UserCredentialsBean userCredentialsBean) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
 		if (u == null) {
 			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
 		}
-		return ResponseEntity.ok(new ApiResponse(encoder.matches(password, u.getPassword())));
+		if(!encoder.matches(userCredentialsBean.getPassword(), u.getPassword())) {
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Senha incorreta"), HttpStatus.BAD_REQUEST);
+		}
+		return ResponseEntity.ok(new ApiResponse(true));
 	}
 	
 	@ApiOperation(value = "Find a user")

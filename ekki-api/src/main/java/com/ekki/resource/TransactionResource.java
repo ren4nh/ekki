@@ -46,17 +46,17 @@ public class TransactionResource {
 			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Usuário não encontrado"),
 					HttpStatus.NOT_FOUND);
 		}
-		if(u.getId() == transactionBean.getDestinationId()) {
+		if(u.getUsername().equalsIgnoreCase(transactionBean.getDestination())) {
 			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Não é possivel transferir para si mesmo"),
 					HttpStatus.BAD_REQUEST);
 		}
-		if(transactionBean.getAmount().compareTo(u.getBalance()) == 1 && transactionBean.getCreditCardId() == null) {
+		if(transactionBean.getAmount().compareTo(u.getBalance()) == 1 && transactionBean.getCreditCard() == null) {
 			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Saldo insuficiente, cartão de crédito deve ser informado"),
 					HttpStatus.BAD_REQUEST);
 		}
 		Transaction t = Transaction.builder().amount(transactionBean.getAmount()).user(u).createdAt(LocalDateTime.now()).status(Status.COMPLETED)
 				.build();
-		User destination = userService.findById(transactionBean.getDestinationId());
+		User destination = userService.findByUsername(transactionBean.getDestination());
 		if (destination == null) {
 			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Favorecido não encontrado"),
 					HttpStatus.BAD_REQUEST);
@@ -66,8 +66,8 @@ public class TransactionResource {
 		if (old != null) {
 			transactionService.cancelTransaction(old);
 		}
-		if (transactionBean.getCreditCardId() != null) {
-			CreditCard cc = creditCardService.findById(transactionBean.getCreditCardId());
+		if (transactionBean.getCreditCard() != null) {
+			CreditCard cc = creditCardService.findById(transactionBean.getCreditCard());
 			if (cc == null) {
 				return new ResponseEntity<Object>(new ApiResponse(404, 404, "Cartão de crédito não encontrado"),
 						HttpStatus.NOT_FOUND);

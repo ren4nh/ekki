@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FavoriteBean {
 	
-	private Long user;
+	private String email;
 	private String description;
 
 }
