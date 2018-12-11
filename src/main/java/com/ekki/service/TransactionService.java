@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import com.ekki.domain.Transaction;
 import com.ekki.domain.Transaction.Status;
-import com.ekki.domain.User;
 import com.ekki.repository.TransactionRepository;
 
 @Service
@@ -35,8 +34,8 @@ public class TransactionService {
 		return transaction.isPresent() ? transaction.get() : null;
 	}
 
-	public List<Transaction> findByUser(User user) {
-		return transactionRepository.getByUser(user);
+	public List<Transaction> findAllUserTransactions(Long userId) {
+		return transactionRepository.findAllUserTransactions(userId);
 	}
 
 	public void delete(Transaction transaction) {

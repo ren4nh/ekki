@@ -36,7 +36,7 @@ public class AuthResource {
 
 	@Autowired
 	private JwtConfig jwtConfig;
-	
+
 	@PostMapping
 	public ResponseEntity<Object> auth(@RequestBody UserCredentialsBean credentials) {
 		Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(credentials.getUsername(),
@@ -44,45 +44,35 @@ public class AuthResource {
 		Authentication auth = authenticationManager.authenticate(authenticationRequest);
 		Long now = System.currentTimeMillis();
 		String token = Jwts.builder().setSubject(auth.getName())
-				// Convert to list of strings.
-				// This is important because it affects the way we get them back in the Gateway.
 				.claim("authorities",
 						auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-				.setIssuedAt(new Date(now)).setExpiration(new Date(now + jwtConfig.getExpiration() * 1000)) // in
-																											// milliseconds
+				.setIssuedAt(new Date(now)).setExpiration(new Date(now + jwtConfig.getExpiration() * 1000))
 				.signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret().getBytes()).compact();
 		Map<String, Object> ret = new HashMap<>();
 		ret.put("token", token);
 		return ResponseEntity.ok(new ApiResponse(ret));
 	}
-	
+
 	@PostMapping("validateToken")
 	public ResponseEntity<Object> validate(@RequestBody UserCredentialsBean credentials) {
-		Claims claims = Jwts.parser().setSigningKey(jwtConfig.getSecret().getBytes()).parseClaimsJws(credentials.getToken())
-				.getBody();
+		Claims claims = Jwts.parser().setSigningKey(jwtConfig.getSecret().getBytes())
+				.parseClaimsJws(credentials.getToken()).getBody();
 		String username = claims.getSubject();
 		if (username == null) {
-			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Erro ao validar token"), HttpStatus.BAD_REQUEST);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Erro ao validar token"),
+					HttpStatus.BAD_REQUEST);
 		}
 		@SuppressWarnings("unchecked")
 		List<String> authorities = (List<String>) claims.get("authorities");
 
-		// 5. Create auth object
-		// UsernamePasswordAuthenticationToken: A built-in object, used by spring to
-		// represent the current authenticated / being authenticated user.
-		// It needs a list of authorities, which has type of GrantedAuthority interface,
-		// where SimpleGrantedAuthority is an implementation of that interface
 		UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, null,
 				authorities.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
-			
+
 		Long now = System.currentTimeMillis();
 		String token = Jwts.builder().setSubject(auth.getName())
-				// Convert to list of strings.
-				// This is important because it affects the way we get them back in the Gateway.
 				.claim("authorities",
 						auth.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
-				.setIssuedAt(new Date(now)).setExpiration(new Date(now + jwtConfig.getExpiration() * 1000)) // in
-																											// milliseconds
+				.setIssuedAt(new Date(now)).setExpiration(new Date(now + jwtConfig.getExpiration() * 1000))
 				.signWith(SignatureAlgorithm.HS512, jwtConfig.getSecret().getBytes()).compact();
 		Map<String, Object> ret = new HashMap<>();
 		ret.put("token", token);

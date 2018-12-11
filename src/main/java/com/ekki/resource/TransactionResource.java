@@ -39,12 +39,12 @@ public class TransactionResource {
 
 	@PostMapping
 	@ApiOperation(value = "Create a new transaction")
-	public ResponseEntity<Object> create(@RequestBody TransactionBean transactionBean) {
+	public ResponseEntity<Object> createTransaction(@RequestBody TransactionBean transactionBean) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
 		if (u == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Usuário não encontrado"),
-					HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Usuário não encontrado"),
+					HttpStatus.BAD_REQUEST);
 		}
 		if(u.getUsername().equalsIgnoreCase(transactionBean.getDestination())) {
 			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Não é possivel transferir para si mesmo"),
@@ -69,8 +69,8 @@ public class TransactionResource {
 		if (transactionBean.getCreditCard() != null) {
 			CreditCard cc = creditCardService.findById(transactionBean.getCreditCard());
 			if (cc == null) {
-				return new ResponseEntity<Object>(new ApiResponse(404, 404, "Cartão de crédito não encontrado"),
-						HttpStatus.NOT_FOUND);
+				return new ResponseEntity<Object>(new ApiResponse(400, 400, "Cartão de crédito não encontrado"),
+						HttpStatus.BAD_REQUEST);
 			}
 			t.setDescription("Pago com o cartão" + cc.getDescription());
 			t.setAmountPayedWithCreditCard(transactionBean.getAmount().subtract(u.getBalance()));
@@ -81,14 +81,14 @@ public class TransactionResource {
 
 	@GetMapping("/user")
 	@ApiOperation(value = "Get all transactions")
-	public ResponseEntity<Object> getAllExternalAccounts() {
+	public ResponseEntity<Object> getAllUserTransactions() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
 		if (u == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Usuário não encontrado"),
-					HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Usuário não encontrado"),
+					HttpStatus.BAD_REQUEST);
 		}
-		List<Transaction> transactions = transactionService.findByUser(u);
+		List<Transaction> transactions = transactionService.findAllUserTransactions(u.getId());
 		return new ResponseEntity<Object>(new ApiResponse(transactions), HttpStatus.OK);
 	}
 

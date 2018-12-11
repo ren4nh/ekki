@@ -42,11 +42,11 @@ public class FavoriteResource {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
 		if (u == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Usuário não encontrado"), HttpStatus.BAD_REQUEST);
 		}
 		User fav = userService.findByUsername(favoriteBean.getEmail());
 		if (fav == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Favorecido não encontrado"), HttpStatus.BAD_REQUEST);
 		}
 		Favorite favorite = Favorite.builder().description(favoriteBean.getDescription()).user(u).favorite(fav).build();
 		favorite = favoriteService.create(favorite);
@@ -55,11 +55,11 @@ public class FavoriteResource {
 
 	@GetMapping("/user")
 	@ApiOperation(value = "Get all favorites by user")
-	public ResponseEntity<Object> getAllFavorites() {
+	public ResponseEntity<Object> getAllUserFavorites() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		User u = userService.findByUsername(authentication.getName());
 		if (u == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Usuário não encontrado"), HttpStatus.BAD_REQUEST);
 		}
 		List<Favorite> favorites = favoriteService.findByUser(u);
 		return new ResponseEntity<Object>(new ApiResponse(favorites), HttpStatus.OK);
@@ -70,11 +70,11 @@ public class FavoriteResource {
 	public ResponseEntity<Object> updateFavorite(@PathVariable("favoriteId") Long favoriteId, @Valid @RequestBody FavoriteBean favoriteBean) {
 		Favorite favorite = favoriteService.findById(favoriteId);
 		if (favorite == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Bank not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Favorecido não encontrado"), HttpStatus.BAD_REQUEST);
 		}
 		User fav = userService.findByUsername(favoriteBean.getEmail());
 		if (fav == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "User not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Favorecido não encontrado"), HttpStatus.BAD_REQUEST);
 		}
 		favorite.setDescription(favoriteBean.getDescription());
 		favorite.setFavorite(fav);
@@ -84,10 +84,10 @@ public class FavoriteResource {
 
 	@DeleteMapping("/{favoriteId}")
 	@ApiOperation(value = "Delete a favorite")
-	public ResponseEntity<Object> deleteBank(@PathVariable("favoriteId") Long favoriteId) {
+	public ResponseEntity<Object> deleteFavorite(@PathVariable("favoriteId") Long favoriteId) {
 		Favorite favorite = favoriteService.findById(favoriteId);
 		if (favorite == null) {
-			return new ResponseEntity<Object>(new ApiResponse(404, 404, "Bank not found"), HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Favorecido não encontrado"), HttpStatus.BAD_REQUEST);
 		}
 		favoriteService.delete(favorite);
 		return new ResponseEntity<Object>(new ApiResponse(true), HttpStatus.OK);

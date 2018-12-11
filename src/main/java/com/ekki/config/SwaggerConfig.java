@@ -21,7 +21,7 @@ public class SwaggerConfig {
 	}
 
 	private ApiInfo metaData() {
-		return new ApiInfoBuilder().title("Americans Bitcoin API").description("\"Ekki API \"").version("1.0.0")
+		return new ApiInfoBuilder().title("Ekki API").description("\"Ekki API \"").version("1.0.0")
 				.license("Apache License Version 2.0").licenseUrl("https://www.apache.org/licenses/LICENSE-2.0\"")
 				.build();
 	}
