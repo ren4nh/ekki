@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm, Field } from 'redux-form';
 import { Card, CardContent, CardHeader, Button, Grid, withStyles, Typography } from '@material-ui/core';
 import * as actions from '../actions';
-import customInput from '../components/custom/customInput';
+import customInput from './custom/customInput';
 
 class ForgotPassword extends Component {
 

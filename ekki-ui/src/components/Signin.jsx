@@ -4,7 +4,7 @@ import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { Card, CardContent, CardHeader, Button, Grid, withStyles, CircularProgress, Typography } from '@material-ui/core';
 import * as actions from '../actions';
-import customInput from '../components/custom/customInput';
+import customInput from './custom/customInput';
 
 class Signin extends Component {
 
