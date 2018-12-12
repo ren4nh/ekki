@@ -1,1 +1,1 @@
-# ekki
+# Ekki bank app
