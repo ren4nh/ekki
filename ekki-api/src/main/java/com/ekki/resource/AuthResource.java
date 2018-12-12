@@ -39,7 +39,7 @@ public class AuthResource {
 
 	@PostMapping
 	public ResponseEntity<Object> auth(@RequestBody UserCredentialsBean credentials) {
-		Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(credentials.getUsername(),
+		Authentication authenticationRequest = new UsernamePasswordAuthenticationToken(credentials.getUsername().trim(),
 				credentials.getPassword());
 		Authentication auth = authenticationManager.authenticate(authenticationRequest);
 		Long now = System.currentTimeMillis();

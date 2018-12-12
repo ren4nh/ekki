@@ -68,7 +68,7 @@ public class UserResource {
 	@ApiOperation(value = "Find a user")
 	@GetMapping
 	public ResponseEntity<Object> getUser(@RequestParam("username") String username) {
-		User user = userService.findByUsername(username);
+		User user = userService.findByUsername(username.trim());
 		if (user == null) {
 			return new ResponseEntity<Object>(new ApiResponse(400, 400, "Usuário não encontrado"),
 					HttpStatus.BAD_REQUEST);

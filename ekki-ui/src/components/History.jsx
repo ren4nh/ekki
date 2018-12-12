@@ -5,11 +5,20 @@ import { connect } from 'react-redux';
 import MUIDataTable from 'mui-datatables';
 import * as actions from '../actions';
 import requireAuth from './requireAuth';
+import Moment from 'moment';
 
 class History extends Component {
   componentDidMount() {
     this.props.setTransactions();
   }
+
+  dateFormatter = cell => {
+    let idLocale = require("moment/locale/pt-br");
+    Moment.updateLocale("pt-br", idLocale);
+    let date = null;
+    if (cell !== null) date = Moment(cell).format("DD/MM/YYYY HH:mm:ss");
+    return date;
+  };
 
   render() {
     const { transactions, classes } = this.props;
@@ -25,7 +34,7 @@ class History extends Component {
 
     const data = [];
     transactions.map(p =>
-      data.push([p.id, p.destination.username, p.createdAt, p.amount, p.status])
+      data.push([p.id, p.destination.username, this.dateFormatter(p.createdAt), p.amount, p.status])
     );
 
     return (
