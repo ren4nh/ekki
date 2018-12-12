@@ -54,7 +54,7 @@ public class TransactionService {
 
 	public Transaction getSameTransactionCreateAtLast2Minutes(Transaction t) {
 		return transactionRepository.getSameTransactionCreateAtLast2Minutes(LocalDateTime.now().minusMinutes(2),
-				LocalDateTime.now(), t.getUser().getId(), t.getDestination().getId());
+				LocalDateTime.now(), t.getUser().getId(), t.getDestination().getId(), t.getAmount());
 	}
 
 }
