@@ -130,7 +130,7 @@ class CreditCard extends Component {
 
     return (
       <Grid container justify="space-evenly" alignItems="stretch" direction="column">
-        <Grid item className={classes.grid} sm={10} xs={6}>
+        <Grid item className={classes.grid}>
           <Card className={classes.card}>
             <CardHeader title="Cartão de Crédito" className={classes.cardHeader} />
             <CardContent>
@@ -193,7 +193,7 @@ class CreditCard extends Component {
             </CardContent>
           </Card>
         </Grid>
-        <Grid item className={classes.grid} sm={10} xs={6}>
+        <Grid item className={classes.grid}>
           <div className={classes.table}>
             <MUIDataTable title="Meus cartões" data={data} columns={columns} options={options} />
           </div>

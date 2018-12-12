@@ -9,11 +9,6 @@ export const setUser = () => async dispatch => {
     try {
         const response = await performRequest('GET', '/user/me', null, true);
 
-        if (!response.data.success) {
-            dispatch(alerts.showErrorMessage(response.data.message));
-            return;
-        }
-
         dispatch({ type: SET_USER, payload: response.data.data });
 
     } catch(e) {

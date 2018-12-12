@@ -76,7 +76,7 @@ public class TransactionResource {
 			t.setAmountPayedWithCreditCard(transactionBean.getAmount().subtract(u.getBalance()));
 		}
 		transactionService.create(t);
-		return new ResponseEntity<Object>(new ApiResponse(true), HttpStatus.CREATED);
+		return new ResponseEntity<Object>(new ApiResponse(t.getUser()), HttpStatus.CREATED);
 	}
 
 	@GetMapping("/user")

@@ -43,7 +43,6 @@ class Transfer extends Component {
 
   submitForm = () => {
     const { formValues } = this.props;
-    console.log(formValues);
     this.props.createTransaction(formValues);
   };
 
@@ -51,8 +50,8 @@ class Transfer extends Component {
     this.setState({ showModal: !this.state.showModal });
   };
 
-  verifyCompleteAmount = value => {
-    if (value > this.props.user.balance) {
+  verifyCompleteAmount = event => {
+    if (event.target.value > this.props.user.balance) {
       this.setState({ usingCreditCard: true });
     } else {
       this.setState({ usingCreditCard: false });
@@ -119,7 +118,7 @@ class Transfer extends Component {
 
     return (
       <Grid container justify="space-evenly" alignItems="stretch" direction="column">
-        <Grid item className={classes.grid} sm={10} xs={6}>
+        <Grid item className={classes.grid}>
           <Card className={classes.card}>
             <CardHeader title="Transferencia" className={classes.cardHeader} />
             <CardContent>
@@ -171,7 +170,7 @@ class Transfer extends Component {
             <PasswordModal toogle={this.toggleModal} callback={this.submitForm} />
           )}
         </Grid>
-        <Grid item className={classes.grid} sm={10} xs={6}>
+        <Grid item className={classes.grid}>
           <div className={classes.table}>
             <MUIDataTable
               title={'Meus favorecidos'}

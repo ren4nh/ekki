@@ -1,6 +1,6 @@
 import { reset } from 'redux-form';
 import performRequest from '../configAxios';
-import { SET_TRANSACTIONS, CREATE_TRANSACTION, AUTH_FETCH, LOAD_DESTINATION } from './types';
+import { SET_TRANSACTIONS, SET_USER, AUTH_FETCH, LOAD_DESTINATION } from './types';
 import * as alerts from './Alert';
 import * as auth from './Auth';
 
@@ -13,7 +13,7 @@ export const createTransaction = formProps => async dispatch => {
     const responseData = response.data.data;
 
     dispatch(alerts.showSuccessMessage('Salvo com sucesso'));
-    dispatch({ type: CREATE_TRANSACTION, payload: responseData });
+    dispatch({ type: SET_USER, payload: responseData });
     dispatch(reset('transferForm'));
   } catch (e) {
     console.log(e);

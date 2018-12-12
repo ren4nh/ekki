@@ -51,7 +51,7 @@ public class UserService {
 	public Token generateToken(User user, Type type) {
 		Token token = new Token();
 		token.setUser(user);
-		token.setExpiredAt(LocalDateTime.now().plusMinutes(10));
+		token.setExpiredAt(LocalDateTime.now().plusDays(1));
 		token.setToken(
 				Base64.getEncoder().encodeToString(new String(user.getUsername() + token.getExpiredAt()).getBytes()));
 		token.setType(type);
